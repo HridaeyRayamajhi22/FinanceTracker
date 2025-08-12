@@ -12,11 +12,11 @@ const AuthLayout = ({children}) => {
        </div>
 
        <div className='hidden md:block w-[40vw] h-screen bg-violet-50 bg-auth-bg-img bg-cover bg-no-repeat bg-center overflow-hidden p-8 relative'>
-          <div className="w-48 h-48 rounded-[40px] bg-purple-600 absolute -top-7 -top-5"></div>
+          <div className="w-48 h-48 rounded-[40px] bg-purple-600 absolute -top-7 -left-5"></div>
           <div className="w-48 h-56 rounded-[40px] border-[20px] border-fuchsia-600 absolute top-[30%] -right-10 "></div>
           <div className="w-48 h-48 rounded-[40px] bg-violet-500 absolute -bottom-7 -left-5"></div>
 
-          <div className='grid grid-cols-1 z-20 '>
+          <div className='grid grid-cols-1 z-20'>
             <StatsInfoCard
               icon= {<LuTrendingUpDown />}
               label="Track Your Income and Expenses"
@@ -29,7 +29,7 @@ const AuthLayout = ({children}) => {
           <img
             src={BAR}
             alt="bar"
-            className='w-64 lg:w-[90%] absolute bottom-10 shadow-blue-400/15' />
+            className='w-64 lg:w-[90%] absolute bottom-10 shadow-blue-400/15 rounded-2xl' />
        </div>
     </div>
   )
