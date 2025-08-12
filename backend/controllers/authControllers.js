@@ -1,5 +1,5 @@
-const User = require("../models/User.js");
-const jwt = require("jsonwebtoken");
+import User from "../models/User.js";
+import jwt from "jsonwebtoken";
 
 // Generate JWT web token'
 const generateToken = (id) => {
@@ -7,43 +7,44 @@ const generateToken = (id) => {
 };
 
 // Register Users
-exports.registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   const { fullName, email, password, profileImageUrl } = req.body;
 
-
-// Validation: Check for missing fields
-if (!fullName || !email || !password) {
-  return res.status(400).json({ message: "All fields are mandatory" });
-}
-
-try {
-  // Check if the email already exists
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return res.status(400).json({ message: "Email address is already in use" });
+  // Validation: Check for missing fields
+  if (!fullName || !email || !password) {
+    return res.status(400).json({ message: "All fields are mandatory" });
   }
 
-  // Create the User
-  const user = await User.create({
-    fullName,
-    email,
-    password,
-    profileImageUrl,
-  });
+  try {
+    // Check if the email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "Email address is already in use" });
+    }
 
-  res.status(201).json({
-    id: user._id,
-    user,
-    token: generateToken(user._id),
-  });
-} catch (err) {
-  res
-    .status(500)
-    .json({ message: "Error registering user", error: err.message });
-}
-}
+    // Create the User
+    const user = await User.create({
+      fullName,
+      email,
+      password,
+      profileImageUrl,
+    });
+
+    res.status(201).json({
+      id: user._id,
+      user,
+      token: generateToken(user._id),
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error registering user", error: err.message });
+  }
+};
 
 // Login Users
-exports.loginUser = async (req, res) => {};
+export const loginUser = async (req, res) => {};
 
-exports.getUserInfo = async (req, res) => {};
+export const getUserInfo = async (req, res) => {};
