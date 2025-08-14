@@ -1,2 +1,2 @@
 Finance Tracker in the process of build. <br/>
-Current status: Controllers integrations are ongoing for income and expenses...
+Current status: Expenses configurations completed..
