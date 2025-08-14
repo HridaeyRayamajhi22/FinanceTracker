@@ -32,8 +32,15 @@ export const addIncome = async (req, res) => {
 
 // Get all income Sources
 export const getAllIncome = async (req, res) => {
+    const userId = req.user.id;
 
-}
+    try{
+        const income = await Income.find({userId}).sort({date: -1});
+        res.json(income);
+    }catch (error){
+        res.status(500).json({message: "Server Error"});
+    }
+};
 
 
 // Delete all Income Sources
