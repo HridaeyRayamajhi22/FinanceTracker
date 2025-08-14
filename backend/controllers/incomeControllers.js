@@ -1,4 +1,4 @@
-import User from "../models/User.js"
+import xlsx from "xlsx"
 import Income from "../models/Income.js"
 
 // Add Income Sources 
@@ -45,12 +45,37 @@ export const getAllIncome = async (req, res) => {
 
 // Delete all Income Sources
 export const deleteIncome = async (req, res) => {
+    const userId = req.user.id;
 
-}
+    try{
+        await Income.findByIdAndDelete(req.params.id);
+        res.json({message: "Income deleted successfully"})
+    } catch(error){
+        res.status(500).json({message: "Server Error"});
+    }
+};
 
 
-
-// Download  
+// Download Excel  
 export const downloadExcelIncome = async (req, res) => {
+    const userId = req.user.id;
 
-}
+    try{
+        const income = await Income.find({userId}).sort({date: -1});
+
+        // Prepare date for Excel
+        const data = income.map((item) => ({
+            Source: item.source,
+            Amount: item.amount,
+            Date: item.date,
+        }));
+
+        const wb = xlsx.utils.book_new();
+        const ws = xlsx.utils.json_to_sheet(data);
+        xlsx.utils.book_append_sheet(wb, ws, "Income");
+        xlsx.writeFile(wb, 'income_details.xlsx');
+        res.download('income_details.xlsx');
+    }catch(error){
+        res.status(500).json({message: "Server Error"})
+    }
+};
