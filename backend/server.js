@@ -7,6 +7,7 @@ import authRoutes from "../backend/routes/authRoutes.js";
 import { fileURLToPath } from "url";
 import incomeRoutes from "../backend/routes/incomeRoutes.js";
 import expenseRoutes from "../backend/routes/expenseRoutes.js";
+import dashboardRoutes from "../backend/routes/dashboardRoutes.js"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,6 +32,7 @@ connectDB();
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/income", incomeRoutes);
 app.use("/api/v1/expense", expenseRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 // Server uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
