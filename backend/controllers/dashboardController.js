@@ -1,5 +1,5 @@
-import Income from "../models/Income";
-import Expense from "../models/Expense";
+import Income from "../models/Income.js";
+import Expense from "../models/Expense.js";
 import { isValidObjectId, Types } from "mongoose";
 
 export default async function getDashboardData(req, res) {
