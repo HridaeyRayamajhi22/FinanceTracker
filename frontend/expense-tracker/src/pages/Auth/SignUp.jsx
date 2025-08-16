@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import AuthLayout from "../../components/layouts/authLayout.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "../../components/layouts/inputs/Input.jsx";
+import Input from "../../components/inputs/Input.jsx";
 import { validateEmail } from "../../utils/helper.js";
-import ProfilePhotoSelector from "../../components/layouts/inputs/ProfilePhotoSelector.jsx";
-import { UserContext } from "../../context/userContext.jsx";
+import ProfilePhotoSelector from "../../components/inputs/ProfilePhotoSelector.jsx";
+import { UserContext } from "../../context/UserContext.jsx";
 import { API_PATHS } from "../../utils/apiPaths.js";
 import uploadImage from "../../utils/uploadImage.js";
 import axiosInstance from "../../utils/axiosInstance.js";
