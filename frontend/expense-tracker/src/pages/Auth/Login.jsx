@@ -1,32 +1,58 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import AuthLayout from '../../components/layouts/authLayout.jsx'
-import {Link, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Input from '../../components/layouts/inputs/Input.jsx'
 import { validateEmail } from '../../utils/helper.js'
+import { API_PATHS } from '../../utils/apiPaths.js'
+import axiosInstance from '../../utils/axiosInstance.js'
+import { UserContext } from '../../context/userContext.jsx'
 
 const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState(null)
 
+  const { updateUser } = useContext(UserContext);
+
   const navigate = useNavigate()
 
   // Handle Login Form onSubmit
   const handleLogin = async (e) => {
-     e.preventDefault()
+    e.preventDefault()
 
-     if(!validateEmail(email)){
-        setError("Please enter a valid email address.")
-     }
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.")
+      return;
+    }
 
-     if(!password) {
-       setError("Please enter the password")
-       return;
-     }
+    if (!password) {
+      setError("Please enter the password")
+      return;
+    }
 
-     setError("")
+    setError("")
 
     //  LOGIN API Call
+    try {
+      const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+      if (token) {
+        localStorage.setItem("token", token);
+        updateUser(user);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Login error:", error.response?.data || error.message);
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something went wrong, Please try again");
+      }
+    }
+
   }
   return (
     <AuthLayout>
@@ -38,16 +64,16 @@ const Login = () => {
 
         <form onSubmit={handleLogin}>
           <Input
-            value= {email}
-            onChange={({target}) => setEmail((target.value))}
+            value={email}
+            onChange={({ target }) => setEmail((target.value))}
             label="Email Address"
             placeholder="Alex@gmail.com"
             type="text"
           />
 
-           <Input
-            value= {password}
-            onChange={({target}) => setPassword((target.value))}
+          <Input
+            value={password}
+            onChange={({ target }) => setPassword((target.value))}
             label="Password"
             placeholder="Minimum 8 characters"
             type="password"
@@ -56,14 +82,14 @@ const Login = () => {
           {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
 
           <button type='submit' className='btn-primary cursor-pointer hover:'>
-             LOGIN
+            LOGIN
           </button>
 
           <p className='text-[13px] text-slate-800 mt-3'>
-              Don't have an account ?{" "}
-              <Link className="font-medium text-primary" to="/signup">
+            Don't have an account ?{" "}
+            <Link className="font-medium text-primary" to="/signup">
               Sign Up
-              </Link>
+            </Link>
           </p>
         </form>
       </div>
