@@ -1,2 +1,2 @@
 Finance Tracker in the process of build. <br/>
-Current status: API integrations on going for Dashboard pages..
+Current status: Dashboard data retrievable and could be shown soon...
