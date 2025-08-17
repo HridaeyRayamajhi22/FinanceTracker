@@ -1,2 +1,2 @@
-Finance Tracker in the process of build. <br/>
+Finance Tracker in the midway process of build. <br/>
 Current status: Dashboard data retrievable and could be shown soon...
