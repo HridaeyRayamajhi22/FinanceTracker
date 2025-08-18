@@ -10,6 +10,7 @@ import { LuHandCoins, LuWalletMinimal } from 'react-icons/lu';
 import { IoCard } from "react-icons/io5";   // ✅ Ionicons v5
 import { addThousandsSeparator } from '../../utils/helper';
 import RecentTransactions from '../../components/Dashboard/RecentTransaction';
+import FinanceOverview from '../../components/Dashboard/FinanceOverview';
 
 const Home = () => {
   useUserAuth();
@@ -43,7 +44,7 @@ const Home = () => {
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className='my-5 mx-auto'>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+        {/* <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 
           <InfoCard
             icon={<IoCard className="text-white w-8 h-8" />}
@@ -65,12 +66,18 @@ const Home = () => {
             value={addThousandsSeparator(dashboardData?.totalExpense || 0)}
             color="bg-red-500"
           />
-        </div>
+        </div> */}
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-6'>
           <RecentTransactions
             transactions={dashboardData?.recentTransactions}
             onSeeMore={() => navigate("/expense")}
+          />
+
+          <FinanceOverview
+            totalBalance={dashboardData?.totalBalance || 0}
+            totalIncome={dashboardData?.totalIncome || 0}
+            totalExpense={dashboardData?.totalExpense || 0}
           />
 
         </div>
