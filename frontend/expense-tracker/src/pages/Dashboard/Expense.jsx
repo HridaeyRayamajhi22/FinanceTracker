@@ -1,44 +1,36 @@
-import React, { useEffect, useState } from 'react'
-import { useUserAuth } from '../../hooks/useUserAuth';
+import React, { useEffect, useState } from "react";
+import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { toast } from "react-hot-toast";
-import ExpenseOverview from '../../components/Expense/ExpenseOverview';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
-import ExpenseList from '../../components/Expense/ExpenseList';
+
+import Modal from "../../components/Modal";
+import ExpenseOverview from "../../components/Expense/ExpenseOverview";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
+import AddExpenseForm from "../../components/Expense/AddExpenseForm";
 
 const Expense = () => {
   useUserAuth();
 
-  const [expenseData, setExpenseData] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [openDeleteAlert, setOpenDeleteAlert] = useState({
-      show: false,
-      data: null
-    });
-  
-    const [openAddExpenseModel, setOpenAddExpenseModel] = useState(false)
+  const [expenseData, setExpenseData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
 
-     // Get All Expense Details
+  // Fetch all expenses
   const fetchExpenseDetails = async () => {
-    if (loading)
-      return;
+    if (loading) return;
 
     setLoading(true);
-
     try {
-      const response = await axiosInstance.get(
-        `${API_PATHS.EXPENSE.GET_ALL_EXPENSE}`
-      );
+      const response = await axiosInstance.get(API_PATHS.EXPENSE.GET_ALL_EXPENSE);
 
       if (response.data) {
-        setExpenseData(response.data)
+        setExpenseData(response.data);
       }
-    }
-    catch (error) {
-      console.log("Something went wrong. Please try again later", error)
-    }
-    finally {
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+      toast.error("Something went wrong while fetching expenses.");
+    } finally {
       setLoading(false);
     }
   };
@@ -47,88 +39,60 @@ const Expense = () => {
   const handleAddExpense = async (expense) => {
     const { category, amount, date, icon } = expense;
 
-    // Validate Checks
     if (!category.trim()) {
-      toast.error("Category is required.")
+      toast.error("Category is required.");
       return;
     }
 
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
-      toast.error("Amount should be a valid number greater than 0.")
+      toast.error("Amount should be a valid number greater than 0.");
       return;
     }
 
     if (!date) {
-      toast.error("Date is required")
+      toast.error("Date is required.");
       return;
     }
 
     try {
-      await axiosInstance.post(API_PATHS.EXPENSE.ADD_EXPENSE, {
-        category,
-        amount,
-        date,
-        icon,
-      });
+      await axiosInstance.post(API_PATHS.EXPENSE.ADD_EXPENSE, { category, amount, date, icon });
 
-      setOpenAddExpenseModel(false);
-      toast.success("Expense added successfully")
+      setOpenAddExpenseModal(false);
+      toast.success("Expense added successfully");
       fetchExpenseDetails();
     } catch (error) {
       console.error(
         "Error adding expense:",
         error.response?.data?.message || error.message
       );
+      toast.error(error.response?.data?.message || "Failed to add expense.");
     }
-  }
+  };
 
   useEffect(() => {
-    fetchExpenseDetails()
-
-    return() => {}
-  }, [])
+    fetchExpenseDetails();
+  }, []);
 
   return (
-   <DashboardLayout activeMenu="Expense">
-      <div className='my-5 mx-auto'>
-        <div className='grid grid-cols-1 gap-6'>
-          <div className=''>
-            <ExpenseOverview
-              transactions={expenseData}
-              onAddExpense={() => setOpenAddExpenseModel(true)}
-            />
-          </div>
-
-          {/* <ExpenseList
+    <DashboardLayout activeMenu="Expense">
+      <div className="my-5 mx-auto">
+        <div className="grid grid-cols-1 gap-6">
+          <ExpenseOverview
             transactions={expenseData}
-            onDelete={(id) => {
-              setOpenDeleteAlert({ show: true, data: id });
-            }}
-            onDownload={handleDownloadExpenseDetails}
-          /> */}
+            onAddExpense={() => setOpenAddExpenseModal(true)}
+          />
         </div>
 
-        {/* <Modal
-          isOpen={openAddIncomeModel}
-          onClose={() => setOpenAddIncomeModel(false)}
-          title="Add Income"
+        <Modal
+          isOpen={openAddExpenseModal}
+          onClose={() => setOpenAddExpenseModal(false)}
+          title="Add Expense"
         >
-          <AddIncomeForm onAddIncome={handleAddIncome} />
-        </Modal> */}
-
-        {/* <Modal
-          isOpen={openDeleteAlert.show}
-          onClose={() => setOpenDeleteAlert({ show: false, data: null })}
-          title="Delete Income"
-        >
-          <DeleteAlert
-            content="Are you sure you want to delete this income detail ?"
-            onDelete={() => deleteIncome(openDeleteAlert.data)}
-          />
-        </Modal> */}
+          <AddExpenseForm onAddExpense={handleAddExpense} />
+        </Modal>
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default Expense
+export default Expense;
