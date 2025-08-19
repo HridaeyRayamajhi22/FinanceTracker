@@ -6,6 +6,8 @@ import { API_PATHS } from '../../utils/apiPaths'
 import Modal from '../../components/Modal'
 import AddIncomeForm from '../../components/Income/AddIncomeForm'
 import toast from 'react-hot-toast'
+import IncomeList from '../../components/Income/IncomeList'
+import DeleteAlert from '../../components/DeleteAlert'
 
 const Income = () => {
 
@@ -82,7 +84,7 @@ const handleAddIncome = async (income) => {
 }
 
 // Handle Download income Details
-const handleDownloadDetails = async () => {
+const handleDownloadIncomeDetails = async () => {
 
 }
 
@@ -104,7 +106,13 @@ return (
           />
         </div>
 
-
+      <IncomeList
+         transactions={incomeData}
+         onDelete={(id) => {
+            setOpenDeleteAlert({show: true, data: id});
+         }}
+         onDownload= {handleDownloadIncomeDetails}
+      />
       </div>
 
       <Modal
@@ -113,6 +121,17 @@ return (
          title="Add Income"
         >  
             <AddIncomeForm onAddIncome={handleAddIncome} />
+        </Modal>
+
+        <Modal 
+           isOpen={openDeleteAlert.show}
+           onClose={() => setOpenDeleteAlert({show: false, data:null })}
+           title="Delete Income"
+        >
+          <DeleteAlert
+             content="Are you sure you want to delete this income detail ?"
+             onDelete={() => deleteIncome(openDeleteAlert.data)}
+          />
         </Modal>
     </div>
   </DashboardLayout>
