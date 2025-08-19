@@ -4,8 +4,7 @@ import { LuImage, LuX } from 'react-icons/lu'
 
 const EmojiPickerPopUp = ({ icon, onSelect }) => {
     const [isOpen, setIsOpen] = useState(false);
-
-
+    
     return (
         <div className='flex flex-col md:flex-row items-start gap-5 mb-6'>
             <div

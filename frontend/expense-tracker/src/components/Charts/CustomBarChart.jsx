@@ -27,7 +27,7 @@ const CustomBarChart = ({ data }) => {
           <p className="text-sm text-gray-600">
             Amount{" "}
             <span className="text-sm font-medium text-gray-900">
-              ${payload[0].payload.amount}
+                रु {payload[0].payload.amount.toLocaleString("en-US")}
             </span>
           </p>
         </div>

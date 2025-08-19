@@ -21,7 +21,7 @@ const RecentIncomeWithChart = ({ data = [], totalIncome = 0 }) => {
   // format income nicely
   const formattedIncome = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "NPR",
   }).format(totalIncome)
 
   return (
