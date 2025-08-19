@@ -100,6 +100,7 @@ const Income = () => {
       )
     }
   }
+  
   // Handle Download income Details
   const handleDownloadIncomeDetails = async () => {
 
