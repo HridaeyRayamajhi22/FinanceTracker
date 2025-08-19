@@ -1,41 +1,75 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DashboardLayout from '../../components/layouts/DashboardLayout'
 import IncomeOverview from '../../components/Income/IncomeOverview'
+import axiosInstance from '../../utils/axiosInstance'
+import { API_PATHS } from '../../utils/apiPaths'
 
 const Income = () => {
 
   const [incomeData, setIncomeData] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [openDeleteAlert, setOpenDeleteAlert] = useState({
-      show: false,
-      data:null
-    });
+  const [loading, setLoading] = useState(false)
+  const [openDeleteAlert, setOpenDeleteAlert] = useState({
+    show: false,
+    data: null
+  });
 
-  const [openAddIncomeModel,setOpenAddIncomeModel] = useState(false)
+  const [openAddIncomeModel, setOpenAddIncomeModel] = useState(false)
 
   // GEt All Income Details
-  const fetchIncomeDetails = async () => {};
+  const fetchIncomeDetails = async () => {
+    if (loading)
+      return;
 
-  // Handle Add Income
-  const handleAddIncome = async (income) => {
+    setLoading(true);
+
+    try {
+      const response = await axiosInstance.get(
+        `${API_PATHS.INCOME.GET_ALL_INCOME}`
+      );
+
+      if (response.data) {
+        setIncomeData(response.data)
+      }
+    }
+    catch (error) {
+      console.log("Something went wrong. Please try again later", error)
+    }
+    finally {
+      setLoading(false);
+    }
+};
+
+// Handle Add Income
+const handleAddIncome = async (income) => {
+
+}
+
+// Handle Download income Details
+const handleDownloadDetails = async () => {
+
+}
+
+useEffect(() => {
+  fetchIncomeDetails()
+
+  return () => {
 
   }
-
-  // Handle Download income Details
-  return (
-     <DashboardLayout activeMenu="Income">
-      <div className='my-5 mx-auto'>
-        <div className='grid grid-cols-1 gap-6'>
-           <div className=''> 
-            <IncomeOverview
-               transactions={incomeData}
-               onAddIncome={() => setOpenAddIncomeModel(true)}      
-            />
-           </div>
+}, [])
+return (
+  <DashboardLayout activeMenu="Income">
+    <div className='my-5 mx-auto'>
+      <div className='grid grid-cols-1 gap-6'>
+        <div className=''>
+          <IncomeOverview
+            transactions={incomeData}
+            onAddIncome={() => setOpenAddIncomeModel(true)}
+          />
         </div>
       </div>
-      </DashboardLayout>
-  )
+    </div>
+  </DashboardLayout>
+)
 }
 
 export default Income
