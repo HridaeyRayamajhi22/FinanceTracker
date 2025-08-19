@@ -34,6 +34,8 @@ const Home = () => {
         `${API_PATHS.DASHBOARD.GET_DATA}`
       )
       setDashboardData(response.data);
+
+      console.log("Dashboard data:", response.data);
     } catch (error) {
       console.log("Something went wrong. Please try again later", error)
     } finally {
@@ -73,8 +75,8 @@ const Home = () => {
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-6'>
-          <RecentTransactions
-            transactions={dashboardData?.recentTransactions}
+          <RecentTransactions  
+            transactions={dashboardData?.recentTransaction}
             onSeeMore={() => navigate("/expense")}
           />
 
@@ -83,9 +85,10 @@ const Home = () => {
             totalIncome={dashboardData?.totalIncome || 0}
             totalExpense={dashboardData?.totalExpense || 0}
           />
+          
 
           <ExpenseTransactions
-             transactions={dashboardData?.last30DaysExpenses?.transactions | [] }
+             transactions={dashboardData?.last30DaysExpenses?.transactions || [] }
              onSeeMore={() => navigate("/expense")}
           />
 
@@ -99,7 +102,7 @@ const Home = () => {
           />
 
           <RecentIncome
-             transactions={dashboardData?.last60DaysIncome?.transactions || []}
+            transactions={dashboardData?.last60DaysIncome?.transactions || []}
              onSeeMore={() => navigate('/income')}
              
             />
