@@ -30,20 +30,32 @@ export const addThousandsSeparator = (num) => {
 }
 
 export const prepareExpenseBarChartData = (data = []) => {
-    const chartData = data.map((item) => ({
-        category: item?.category,
-        amount: item?.amount,
-    }))
-    return chartData;
-}
+  const categoryMap = {};
+
+  data.forEach(item => {
+    if (!item.category) return;
+
+    if (!categoryMap[item.category]) {
+      categoryMap[item.category] = 0;
+    }
+    categoryMap[item.category] += Number(item.amount) || 0;
+  });
+
+  return Object.keys(categoryMap).map(category => ({
+    name: category,
+    amount: categoryMap[category],
+  }));
+};
+
+
 
 export const prepareIncomeBarChartData = (data = []) => {
     const sortedData = [...data].sort((a,b) => new Date(a.date) -new Date(b.date));
 
     const chartData = sortedData.map((item) => ({
-        month: moment(item?.date).format("DD MMM"),
+        month: moment(item?.s).format("DD MMM"),
         amount: item?.amount,
-        source: item?.source,
+        name: item?.source,
     }))
     return chartData;
 }

@@ -11,23 +11,20 @@ import {
 } from "recharts";
 
 const CustomBarChart = ({ data }) => {
-  // Function to alternate colors
-  const getBarColor = (index) => {
-    return index % 2 === 0 ? "#875cf5" : "#cfbefb";
-  };
+  // Softer gradient colors
+  const barColors = ["#a78bfa", "#c4b5fd"]; 
 
-  // Custom tooltip for bars
+  // Custom tooltip
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
+      const entry = payload[0].payload;
       return (
-        <div className="bg-white shadow-md rounded-lg p-2 border border-gray-300">
-          <p className="text-xs font-semibold text-purple-800 mb-1">
-            {payload[0].payload.category}
-          </p>
+        <div className="bg-white shadow-sm rounded-lg p-2 border border-gray-200">
+          <p className="text-xs font-semibold text-purple-800 mb-1">{entry.name}</p>
           <p className="text-sm text-gray-600">
             Amount{" "}
             <span className="text-sm font-medium text-gray-900">
-                रु {payload[0].payload.amount.toLocaleString("en-US")}
+              रु {entry.amount.toLocaleString("en-US")}
             </span>
           </p>
         </div>
@@ -37,25 +34,28 @@ const CustomBarChart = ({ data }) => {
   };
 
   return (
-    <div className="bg-white mt-6">
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <CartesianGrid stroke="none" />
-
+    <div className="bg-white mt-6 p-4 rounded-lg shadow-sm">
+      <ResponsiveContainer width="100%" height={350}>
+        <BarChart data={data} margin={{ top: 20, right: 20, left: 0, bottom: 10 }}>
+          <CartesianGrid stroke="#f0f0f0" strokeDasharray="3 3" />
           <XAxis
-            dataKey="month"
+            dataKey="name"
             tick={{ fontSize: 12, fill: "#555" }}
             stroke="none"
           />
-          <YAxis tick={{ fontSize: 12, fill: "#555" }} stroke="none" />
-
+          <YAxis
+            tick={{ fontSize: 12, fill: "#555" }}
+            stroke="none"
+            width={40}
+          />
           <Tooltip content={<CustomTooltip />} />
 
-          <Bar dataKey="amount" radius={[10, 10, 0, 0]}>
+          <Bar dataKey="amount" radius={[6, 6, 0, 0]} animationDuration={800}>
             {data.map((entry, index) => (
               <Cell
-                key={entry.month || index} // safer than plain index
-                fill={getBarColor(index)}
+                key={entry.name || index}
+                fill={barColors[index % barColors.length]}
+                style={{ transition: "all 0.3s ease" }}
               />
             ))}
           </Bar>
