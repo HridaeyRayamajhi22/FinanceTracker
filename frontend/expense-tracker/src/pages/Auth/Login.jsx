@@ -55,46 +55,49 @@ const Login = () => {
 
   }
   return (
-    <AuthLayout>
-      <div className='lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center'>
-        <h3 className='text-xl font-semibold text-black '>Welcome Back</h3>
-        <p className='text-xs text-slate-700 mt-[5px] mb-6'>
-          Please enter your details to log in
+  <AuthLayout>
+    <div className='lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center mx-auto px-4'>
+      {/* Title */}
+      <h3 className='text-2xl font-semibold text-black text-center'>Welcome Back</h3>
+      <p className='text-sm text-slate-700 mt-2 mb-6 text-center'>
+        Please enter your details to log in
+      </p>
+
+      {/* Form */}
+      <form onSubmit={handleLogin} className='flex flex-col gap-4'>
+        <Input
+          value={email}
+          onChange={({ target }) => setEmail(target.value)}
+          label="Email Address"
+          placeholder="Alex@gmail.com"
+          type="text"
+        />
+
+        <Input
+          value={password}
+          onChange={({ target }) => setPassword(target.value)}
+          label="Password"
+          placeholder="Minimum 8 characters"
+          type="password"
+        />
+
+        {error && <p className='text-red-500 text-xs pb-2.5 text-center'>{error}</p>}
+
+        <button type='submit' className='btn-primary w-full mt-2'>
+          LOGIN
+        </button>
+
+        <p className='text-[13px] text-slate-800 mt-4 text-center'>
+          Don't have an account?{" "}
+          <Link className="font-medium text-primary" to="/signup">
+            Sign Up
+          </Link>
         </p>
+      </form>
+    </div>
+  </AuthLayout>
+)
 
-        <form onSubmit={handleLogin}>
-          <Input
-            value={email}
-            onChange={({ target }) => setEmail((target.value))}
-            label="Email Address"
-            placeholder="Alex@gmail.com"
-            type="text"
-          />
-
-          <Input
-            value={password}
-            onChange={({ target }) => setPassword((target.value))}
-            label="Password"
-            placeholder="Minimum 8 characters"
-            type="password"
-          />
-
-          {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
-
-          <button type='submit' className='btn-primary cursor-pointer hover:'>
-            LOGIN
-          </button>
-
-          <p className='text-[13px] text-slate-800 mt-3'>
-            Don't have an account ?{" "}
-            <Link className="font-medium text-primary" to="/signup">
-              Sign Up
-            </Link>
-          </p>
-        </form>
-      </div>
-    </AuthLayout>
-  )
 }
 
 export default Login

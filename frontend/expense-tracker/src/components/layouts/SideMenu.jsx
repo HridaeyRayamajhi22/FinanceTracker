@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { SIDE_MENU_DATA } from "../../utils/data";
 import { UserContext } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import CharAvatar from "../Cards/CharAvatar"; // make sure to import your CharAvatar component
+import CharAvatar from "../Cards/CharAvatar"; // Make sure this component exists
 
 const SideMenu = ({ activeMenu }) => {
   const { user, clearUser } = useContext(UserContext);
@@ -17,19 +17,29 @@ const SideMenu = ({ activeMenu }) => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    clearUser();
-    navigate("/login");
+    try {
+      // Clear local storage
+      localStorage.clear();
+
+      // Clear user context safely
+      if (clearUser) clearUser();
+
+      // Navigate to login page and replace history
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
     <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 p-5 sticky top-[61px] z-20">
+      {/* User Info */}
       <div className="flex flex-col items-center gap-3 mt-3 mb-7">
         {user?.profileImageUrl ? (
           <img
             src={user.profileImageUrl}
             alt="Profile Image"
-            className="w-20 h-20 bg-slate-300 rounded-full"
+            className="w-20 h-20 bg-slate-300 rounded-full object-cover"
           />
         ) : (
           <CharAvatar
@@ -39,12 +49,12 @@ const SideMenu = ({ activeMenu }) => {
             style="text-xl"
           />
         )}
-
         <h5 className="text-gray-950 font-medium leading-6">
           {user?.fullName || "Guest"}
         </h5>
       </div>
 
+      {/* Menu Items */}
       {SIDE_MENU_DATA.map((item, index) => (
         <button
           key={`menu_${index}`}
@@ -56,6 +66,7 @@ const SideMenu = ({ activeMenu }) => {
           {item.label}
         </button>
       ))}
+
     </div>
   );
 };
