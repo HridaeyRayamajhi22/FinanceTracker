@@ -1,2 +1,16 @@
-Finance Tracker in the midway process of build. <br/>
-Current status: Finished with the DASHBOARD part...
+Mero Hisab
+A simple MERN stack expense tracker app.
+
+Features:
+
+User Login & Signup (JWT)
+
+Add/View/Delete Income & Expenses
+
+View Dashboard with Summary
+
+Interactive Charts for data
+
+Export data to Excel
+
+Mobile Responsive 
