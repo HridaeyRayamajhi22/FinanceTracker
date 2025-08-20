@@ -16,7 +16,7 @@ import Last30DaysExpenses from '../../components/Dashboard/Last30DaysExpenses';
 import RecentIncomeWithChart from '../../components/Dashboard/RecentIncomeWithChart';
 import RecentIncome from '../../components/Dashboard/RecentIncome';
 
-// 👉 Skeleton components
+// Skeleton components
 const SkeletonCard = () => (
   <div className="animate-pulse rounded-2xl bg-gray-200 h-28 w-full"></div>
 );

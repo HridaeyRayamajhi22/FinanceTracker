@@ -13,6 +13,35 @@ import AddExpenseForm from "../../components/Expense/AddExpenseForm";
 import ExpenseList from "../../components/Expense/ExpenseList";
 import DeleteAlert from "../../components/DeleteAlert";
 
+// Skeleton Components
+const SkeletonBox = ({ className }) => (
+  <div className={`animate-pulse bg-gray-300 rounded-md ${className}`} />
+);
+
+const ExpenseOverviewSkeleton = () => (
+  <div className="p-6 bg-white shadow rounded-lg space-y-4">
+    <SkeletonBox className="h-6 w-32" />
+    <div className="grid grid-cols-3 gap-4">
+      <SkeletonBox className="h-20 w-full" />
+      <SkeletonBox className="h-20 w-full" />
+      <SkeletonBox className="h-20 w-full" />
+    </div>
+  </div>
+);
+
+const ExpenseListSkeleton = () => (
+  <div className="p-6 bg-white shadow rounded-lg space-y-4 mt-6">
+    <SkeletonBox className="h-6 w-48" />
+    {[...Array(5)].map((_, i) => (
+      <div key={i} className="flex justify-between items-center py-2 border-b">
+        <SkeletonBox className="h-4 w-24" />
+        <SkeletonBox className="h-4 w-16" />
+        <SkeletonBox className="h-4 w-20" />
+      </div>
+    ))}
+  </div>
+);
+
 const Expense = () => {
   useUserAuth();
 
@@ -21,7 +50,7 @@ const Expense = () => {
   const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
-    data: null
+    data: null,
   });
 
   // Fetch all expenses
@@ -63,7 +92,12 @@ const Expense = () => {
     }
 
     try {
-      await axiosInstance.post(API_PATHS.EXPENSE.ADD_EXPENSE, { category, amount, date, icon });
+      await axiosInstance.post(API_PATHS.EXPENSE.ADD_EXPENSE, {
+        category,
+        amount,
+        date,
+        icon,
+      });
 
       setOpenAddExpenseModal(false);
       toast.success("Expense added successfully");
@@ -80,23 +114,22 @@ const Expense = () => {
   // Delete Expenses
   const deleteExpense = async (id) => {
     try {
-      await axiosInstance.delete(API_PATHS.EXPENSE.DELETE_EXPENSE(id))
+      await axiosInstance.delete(API_PATHS.EXPENSE.DELETE_EXPENSE(id));
 
       setOpenDeleteAlert({ show: false, data: null });
       toast.success("Expense details deleted successfully");
       fetchExpenseDetails();
     } catch (error) {
-      console.error("Error deleting expense: ",
+      console.error(
+        "Error deleting expense: ",
         error.response?.data?.message || error.message
-      )
+      );
     }
-  }
+  };
 
   // Handle Download expense Details
-
   const handleDownloadExpenseDetails = async () => {
     try {
-      // Fetch expenses from API
       const response = await axiosInstance.get(API_PATHS.EXPENSE.GET_ALL_EXPENSE);
 
       const expenseData = response.data.map((item) => ({
@@ -105,21 +138,19 @@ const Expense = () => {
         Date: item.date,
       }));
 
-      // Create a worksheet
       const worksheet = XLSX.utils.json_to_sheet(expenseData);
 
-      // Create a workbook and add the worksheet
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
 
-      // Generate buffer
       const excelBuffer = XLSX.write(workbook, {
         bookType: "xlsx",
         type: "array",
       });
 
-      // Save the file
-      const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+      const data = new Blob([excelBuffer], {
+        type: "application/octet-stream",
+      });
       saveAs(data, "expense_details.xlsx");
 
       toast.success("Expense details downloaded successfully!");
@@ -129,10 +160,6 @@ const Expense = () => {
     }
   };
 
-
-
-
-
   useEffect(() => {
     fetchExpenseDetails();
   }, []);
@@ -141,19 +168,27 @@ const Expense = () => {
     <DashboardLayout activeMenu="Expense">
       <div className="my-5 mx-auto">
         <div className="grid grid-cols-1 gap-6">
-          <ExpenseOverview
-            transactions={expenseData}
-            onAddExpense={() => setOpenAddExpenseModal(true)}
-          />
+          {loading ? (
+            <ExpenseOverviewSkeleton />
+          ) : (
+            <ExpenseOverview
+              transactions={expenseData}
+              onAddExpense={() => setOpenAddExpenseModal(true)}
+            />
+          )}
         </div>
 
-        <ExpenseList
-          transactions={expenseData}
-          onDelete={(id) => {
-            setOpenDeleteAlert({ show: true, data: id });
-          }}
-          onDownload={handleDownloadExpenseDetails}
-        />
+        {loading ? (
+          <ExpenseListSkeleton />
+        ) : (
+          <ExpenseList
+            transactions={expenseData}
+            onDelete={(id) => {
+              setOpenDeleteAlert({ show: true, data: id });
+            }}
+            onDownload={handleDownloadExpenseDetails}
+          />
+        )}
 
         <Modal
           isOpen={openAddExpenseModal}

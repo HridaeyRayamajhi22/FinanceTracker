@@ -9,9 +9,15 @@ import toast from 'react-hot-toast'
 import IncomeList from '../../components/Income/IncomeList'
 import DeleteAlert from '../../components/DeleteAlert'
 import { useUserAuth } from '../../hooks/useUserAuth'
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
+// Skeleton Components
+const SkeletonBox = ({ height = "h-40" }) => (
+  <div className={`animate-pulse rounded-2xl bg-gray-200 ${height} w-full`} />
+);
 
 const Income = () => {
-
   useUserAuth();
 
   const [incomeData, setIncomeData] = useState([])
@@ -25,8 +31,7 @@ const Income = () => {
 
   // Get All Income Details
   const fetchIncomeDetails = async () => {
-    if (loading)
-      return;
+    if (loading) return;
 
     setLoading(true);
 
@@ -103,36 +108,74 @@ const Income = () => {
   
   // Handle Download income Details
   const handleDownloadIncomeDetails = async () => {
+    try {
+      // pick only source, amount, date from incomeData
+      const filteredData = incomeData.map((item) => ({
+        Source: item.source,
+        Amount: item.amount,
+        Date: item.date,
+      }));
 
-  }
+      const worksheet = XLSX.utils.json_to_sheet(filteredData);
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Income");
+
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+
+      const data = new Blob([excelBuffer], {
+        type: "application/octet-stream",
+      });
+      saveAs(data, "income_details.xlsx");
+
+      toast.success("Income details downloaded successfully!");
+    } catch (error) {
+      console.error("Error downloading income", error);
+      toast.error("Failed to download income details. Please try again.");
+    }
+  };
+
 
   useEffect(() => {
-    fetchIncomeDetails()
-
-    return () => {
-
-    }
+    fetchIncomeDetails();
   }, [])
+
   return (
     <DashboardLayout activeMenu="Income">
       <div className='my-5 mx-auto'>
         <div className='grid grid-cols-1 gap-6'>
-          <div className=''>
-            <IncomeOverview
-              transactions={incomeData}
-              onAddIncome={() => setOpenAddIncomeModel(true)}
-            />
+          {/* Income Overview */}
+          <div>
+            {loading ? (
+              <SkeletonBox height="h-40" />
+            ) : (
+              <IncomeOverview
+                transactions={incomeData}
+                onAddIncome={() => setOpenAddIncomeModel(true)}
+              />
+            )}
           </div>
 
-          <IncomeList
-            transactions={incomeData}
-            onDelete={(id) => {
-              setOpenDeleteAlert({ show: true, data: id });
-            }}
-            onDownload={handleDownloadIncomeDetails}
-          />
+          {/* Income List */}
+          <div>
+            {loading ? (
+              <SkeletonBox height="h-80" />
+            ) : (
+              <IncomeList
+                transactions={incomeData}
+                onDelete={(id) => {
+                  setOpenDeleteAlert({ show: true, data: id });
+                }}
+                onDownload={handleDownloadIncomeDetails}
+              />
+            )}
+          </div>
         </div>
 
+        {/* Add Income Modal */}
         <Modal
           isOpen={openAddIncomeModel}
           onClose={() => setOpenAddIncomeModel(false)}
@@ -141,6 +184,7 @@ const Income = () => {
           <AddIncomeForm onAddIncome={handleAddIncome} />
         </Modal>
 
+        {/* Delete Alert Modal */}
         <Modal
           isOpen={openDeleteAlert.show}
           onClose={() => setOpenDeleteAlert({ show: false, data: null })}
