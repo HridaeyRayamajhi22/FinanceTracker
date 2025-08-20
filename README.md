@@ -1,4 +1,4 @@
-Mero Hisab
+Mero Hisab (Finance Tracker)
 A simple MERN stack expense tracker app.
 
 Features:
