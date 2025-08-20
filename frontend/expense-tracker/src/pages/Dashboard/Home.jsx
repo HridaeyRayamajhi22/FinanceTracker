@@ -16,32 +16,41 @@ import Last30DaysExpenses from '../../components/Dashboard/Last30DaysExpenses';
 import RecentIncomeWithChart from '../../components/Dashboard/RecentIncomeWithChart';
 import RecentIncome from '../../components/Dashboard/RecentIncome';
 
+// 👉 Skeleton components
+const SkeletonCard = () => (
+  <div className="animate-pulse rounded-2xl bg-gray-200 h-28 w-full"></div>
+);
+
+const SkeletonBox = ({ height = "h-40" }) => (
+  <div className={`animate-pulse rounded-2xl bg-gray-200 ${height} w-full`} />
+);
+
 const Home = () => {
   useUserAuth();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [dashboardData, setDashboardData] = useState(null)
+  const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const fetchDashboardData = async () => {
     if (loading) return;
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await axiosInstance.get(
         `${API_PATHS.DASHBOARD.GET_DATA}`
-      )
+      );
       setDashboardData(response.data);
 
       console.log("Dashboard data:", response.data);
     } catch (error) {
-      console.log("Something went wrong. Please try again later", error)
+      console.log("Something went wrong. Please try again later", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchDashboardData();
@@ -49,64 +58,85 @@ const Home = () => {
 
   return (
     <DashboardLayout activeMenu="Dashboard">
-      <div className='my-5 mx-auto'>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 '>
+      <div className="my-5 mx-auto">
+        {/* Top 3 Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {loading ? (
+            <>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </>
+          ) : (
+            <>
+              <InfoCard
+                icon={<IoCard className="text-white w-8 h-8" />}
+                label="Total Balance"
+                value={addThousandsSeparator(dashboardData?.totalBalance || 0)}
+                color="bg-primary"
+              />
 
-          <InfoCard
-            icon={<IoCard className="text-white w-8 h-8" />}
-            label="Total Balance"
-            value={addThousandsSeparator(dashboardData?.totalBalance || 0)}
-            color="bg-primary"
-          />
+              <InfoCard
+                icon={<LuHandCoins className="text-white w-8 h-8" />}
+                label="Total Income"
+                value={addThousandsSeparator(dashboardData?.totalIncome || 0)}
+                color="bg-orange-500"
+              />
 
-          <InfoCard
-            icon={<LuHandCoins className="text-white w-8 h-8" />}
-            label="Total Income"
-            value={addThousandsSeparator(dashboardData?.totalIncome || 0)}
-            color="bg-orange-500"
-          />
-
-          <InfoCard
-            icon={<LuWalletMinimal className="text-white w-8 h-8" />}
-            label="Total Expense"
-            value={addThousandsSeparator(dashboardData?.totalExpense || 0)}
-            color="bg-red-500"
-          />
+              <InfoCard
+                icon={<LuWalletMinimal className="text-white w-8 h-8" />}
+                label="Total Expense"
+                value={addThousandsSeparator(dashboardData?.totalExpense || 0)}
+                color="bg-red-500"
+              />
+            </>
+          )}
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-6'>
-          <RecentTransactions  
-            transactions={dashboardData?.recentTransaction}
-            onSeeMore={() => navigate("/expense")}
-          />
+        {/* Other Dashboard Sections */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {loading ? (
+            <>
+              <SkeletonBox height="h-48" />
+              <SkeletonBox height="h-48" />
+              <SkeletonBox height="h-64" />
+              <SkeletonBox height="h-64" />
+              <SkeletonBox height="h-64" />
+              <SkeletonBox height="h-48" />
+            </>
+          ) : (
+            <>
+              <RecentTransactions  
+                transactions={dashboardData?.recentTransaction}
+                onSeeMore={() => navigate("/expense")}
+              />
 
-          <FinanceOverview
-            totalBalance={dashboardData?.totalBalance || 0}
-            totalIncome={dashboardData?.totalIncome || 0}
-            totalExpense={dashboardData?.totalExpense || 0}
-          />
-          
+              <FinanceOverview
+                totalBalance={dashboardData?.totalBalance || 0}
+                totalIncome={dashboardData?.totalIncome || 0}
+                totalExpense={dashboardData?.totalExpense || 0}
+              />
 
-          <ExpenseTransactions
-             transactions={dashboardData?.last30DaysExpense?.transactions || [] }
-             onSeeMore={() => navigate("/expense")}
-          />
+              <ExpenseTransactions
+                transactions={dashboardData?.last30DaysExpense?.transactions || [] }
+                onSeeMore={() => navigate("/expense")}
+              />
 
-          <Last30DaysExpenses
-           data={dashboardData?.last30DaysExpense.transactions || []}
+              <Last30DaysExpenses
+                data={dashboardData?.last30DaysExpense?.transactions || []}
+              />
 
-          />
+              <RecentIncomeWithChart 
+                data={dashboardData?.last60DaysIncome?.transactions?.slice(0,4) || []}
+                totalIncome={dashboardData?.totalIncome || 0 }
+              />
 
-          <RecentIncomeWithChart 
-            data={dashboardData?.last60DaysIncome?.transactions?.slice(0,4) || []}
-            totalIncome={dashboardData?.totalIncome || 0 }
-          />
-
-          <RecentIncome
-            transactions={dashboardData?.last60DaysIncome?.transactions || []}
-             onSeeMore={() => navigate('/income')}
-             
-            />
+              <RecentIncome
+                transactions={dashboardData?.last60DaysIncome?.transactions || []}
+                onSeeMore={() => navigate('/income')}
+              />
+            </>
+          )}
         </div>
       </div>
     </DashboardLayout>
