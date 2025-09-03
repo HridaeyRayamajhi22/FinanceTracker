@@ -14,3 +14,5 @@ Interactive Charts for data
 Export data to Excel
 
 Mobile Responsive 
+
+Status: Completed, can be enhanced...
